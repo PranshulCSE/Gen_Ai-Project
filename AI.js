@@ -1,3 +1,5 @@
+// OLD LOGIC - replaced by new structure in backend/services/geminiService.js
+/*
 const GoogleGenAI = require('@google/genai');
 
 require('dotenv').config();
@@ -25,3 +27,4 @@ async function main(message) {
 module.exports = {
     main,
 };
+*/
