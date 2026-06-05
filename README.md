@@ -89,3 +89,15 @@ curl -X POST http://localhost:3000/api/message \
 
 - Make sure `GEMINI_API_KEY` and `GEMINI_MODEL` are set before starting the server.
 - The project currently exposes only the backend API; there is no frontend in this folder.
+
+## Frontend
+
+A simple React + Vite chatbot frontend now lives in the `Frontend` folder.
+
+```bash
+cd Frontend
+npm install
+npm run dev
+```
+
+The Vite dev server proxies `/api` requests to `http://localhost:3000`, so start the backend first, then open the frontend in the browser.
