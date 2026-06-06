@@ -13,4 +13,4 @@ router.post(
 router.get("/history/:id", chatController.getConversationHistory);
 router.delete("/:id", chatController.deleteConversation);
 
-module.exports = router; const express = require('express');
+module.exports = router;

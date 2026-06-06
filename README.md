@@ -1,98 +1,83 @@
 # Gen-AI
 
-Gen-AI is a simple Node.js + Express backend that sends user messages to Google Gemini and returns the generated response.
+Gen-AI is a split full-stack chatbot project:
 
-## What it does
+- a Node.js + Express backend that stores conversations and talks to Google Gemini
+- a React + Vite frontend that renders the chat experience in a clean modular UI
 
-- Accepts a message through a JSON API
-- Sends the message to Gemini using `@google/genai`
-- Returns the model response as JSON
+The frontend has been reorganized into small modules so the app is easier to read, extend, and debug. The stylesheet remains a single file as requested.
 
-## Tech Stack
+## Highlights
 
-- Node.js
-- Express
-- Google Gen AI SDK
-- dotenv
+- Chat conversations persist through the backend and browser storage
+- Markdown replies render cleanly with GitHub-flavored Markdown support
+- The frontend uses a simple architecture: hook for state, service for API calls, utilities for storage and formatting, and separate chat components
+- Vite proxies `/api` to the backend so local development stays simple
 
-## Project Structure
+## Project Layout
 
-- `index.js` - Express server and API route
-- `AI.js` - Gemini integration and response handling
-- `.env` - environment variables for the API key and model
+```text
+Gen-AI/
+├─ backend/
+│  ├─ server.js
+│  ├─ routes/
+│  ├─ controllers/
+│  ├─ services/
+│  └─ models/
+├─ Frontend/
+│  ├─ src/
+│  │  ├─ App.jsx
+│  │  ├─ components/chat/
+│  │  ├─ hooks/
+│  │  ├─ services/
+│  │  ├─ utils/
+│  │  └─ constants/
+│  └─ src/styles.css
+├─ index.js
+└─ AI.js
+```
 
-## Prerequisites
+## Frontend Architecture
 
-- Node.js installed
+The React app is now split like this:
+
+- `src/App.jsx` keeps the page layout small and readable
+- `src/hooks/useChatSession.js` owns chat state, loading, history sync, and reset behavior
+- `src/services/chatApi.js` handles all API requests to the backend
+- `src/components/chat/` contains the header, message list, and composer UI pieces
+- `src/utils/storage.js` wraps browser storage access
+- `src/utils/formatTime.js` formats message timestamps
+- `src/constants/chatContent.js` holds copy and starter prompts
+
+## Requirements
+
+- Node.js 18 or newer
 - A Google Gemini API key
+- MongoDB available to the backend if your current backend config requires it
 
-## Environment Variables
+## Backend Setup
 
-Create a `.env` file in the project root with:
+Create a `.env` file inside `backend/`:
 
 ```env
 GEMINI_API_KEY=your_api_key_here
-GEMINI_MODEL=your_model_name_here
+GEMINI_MODEL=gemini-1.5-flash
 PORT=3000
 ```
 
-## Installation
+Install backend dependencies and start the server:
 
 ```bash
+cd backend
 npm install
+npm start
 ```
 
-## Run the Server
+The backend runs on `http://localhost:3000` by default.
 
-```bash
-node index.js
-```
+## Frontend Setup
 
-The server starts on `http://localhost:3000` by default, or on the port defined in `PORT`.
-
-## API Reference
-
-### POST `/api/message`
-
-Send a message to the AI and receive the generated response.
-
-Request body:
-
-```json
-{
-  "message": "Explain artificial intelligence in simple terms"
-}
-```
-
-Success response:
-
-```json
-{
-  "response": "...generated text..."
-}
-```
-
-Error responses:
-
-- `400 Bad Request` when `message` is missing
-- `500 Internal Server Error` when the model request fails
-
-## Example Request
-
-```bash
-curl -X POST http://localhost:3000/api/message \
-  -H "Content-Type: application/json" \
-  -d "{\"message\":\"Write a short intro about AI\"}"
-```
-
-## Notes
-
-- Make sure `GEMINI_API_KEY` and `GEMINI_MODEL` are set before starting the server.
-- The project currently exposes only the backend API; there is no frontend in this folder.
-
-## Frontend
-
-A simple React + Vite chatbot frontend now lives in the `Frontend` folder.
+Install frontend dependencies and start Vite:
 
 ```bash
 cd Frontend
@@ -100,4 +85,29 @@ npm install
 npm run dev
 ```
 
-The Vite dev server proxies `/api` requests to `http://localhost:3000`, so start the backend first, then open the frontend in the browser.
+The frontend runs on `http://localhost:5173` and proxies `/api` requests to the backend.
+
+## Run Locally
+
+Use two terminals:
+
+1. Start the backend from `backend/`
+2. Start the frontend from `Frontend/`
+3. Open `http://localhost:5173` in your browser
+
+If the Gemini API key is missing, the backend will stop on startup, so the frontend will still load but message requests will fail until the backend is configured.
+
+## API Routes
+
+The frontend uses these backend endpoints:
+
+- `POST /api/chat/start` to create a conversation
+- `POST /api/chat/message` to send a message
+- `GET /api/chat/history/:id` to load saved history
+- `DELETE /api/chat/:id` to remove a conversation
+
+## Notes
+
+- Public assets in Vite are case-sensitive in production.
+- The frontend intentionally keeps one CSS file for simplicity.
+- The root `index.js` and `AI.js` files are legacy references and the active backend is in `backend/server.js`.

@@ -41,5 +41,5 @@ const conversationSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model("Conversation", conversationSchema); const mongoose = require('mongoose');
+module.exports = mongoose.model("Conversation", conversationSchema);
 
